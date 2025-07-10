@@ -1,0 +1,28 @@
+{
+    "matrimonialId": "M876543",
+    "basicSearch": {
+        "maritalStatusOptions": ["Single", "Divorced", "Widowed"],
+        "ageOptions": ["22", "24", "30", "36", "40", "46", "50"],
+        "heightOptions": [
+            "5ft 0in - 152cm", "5ft 4in - 163cm", "5ft 6in - 168cm", 
+            "5ft 10in - 178cm", "6ft 0in - 183cm", "6ft 2in - 188cm"
+        ],
+        "locationOptions": ["Ahmedabad", "Phoenix", "San Antonio", "Dallas", "San Jose"]
+    },
+    "advancedSearch": {
+        "tagCategories": [
+            {
+                "name": "Education and Profession",
+                "tags": ["Master's Degree", "Engineer", "Doctor", "Teacher", "Artist"]
+            },
+            {
+                "name": "Lifestyle",
+                "tags": ["Vegan", "Yoga Practitioner", "Fitness Enthusiast", "Travel Lover"]
+            },
+            {
+                "name": "Family Background",
+                "tags": ["Nuclear Family", "Business Family", "Service Family"]
+            }
+        ]
+    }
+}

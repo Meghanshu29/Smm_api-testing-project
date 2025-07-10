@@ -1,0 +1,8 @@
+{
+  "matrimonialId": "MT1157",
+  "priorities": {
+    "first": "Geographic",
+    "second": "Demographic",
+    "third": "Professional"
+  }
+}
