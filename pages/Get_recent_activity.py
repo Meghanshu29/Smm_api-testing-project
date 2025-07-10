@@ -34,13 +34,25 @@ def get_recent_activity():
     # Assertions to verify the response
     assert response.status_code == 200  # Expecting a 200 OK response
     response_data = response.json()
+    assert 'success' in response_data.get('status', '').lower(), f"Fetch failed: {response_data.get('message')}"
+    assert 'result' in response_data, "No result field in response"
+    assert isinstance(response_data['result'], list), "Result is not a list"
 
-    # Check if the response contains 'success' message
-    assert 'success' in response_data.get('status', '').lower(), f"Recent activity fetch failed: {response_data.get('message')}"
+    activities = response_data['result']
+    assert len(activities) > 0, "No recent activity found"
 
-    # Optional: Print the response for debugging
-    print(f"Response: {response.json()}")
+    # Sample verification: checking one or more expected fields
+    for activity in activities:
+        assert 'activityId' in activity, "Missing activityId"
+        assert 'activityType' in activity, "Missing activityType"
+        assert activity['activityType'] in ['view', 'like', 'dislike'], f"Unexpected activityType: {activity['activityType']}"
+        assert 'message' in activity, "Missing message"
+        assert 'profileDetails' in activity, "Missing profileDetails"
+        assert 'id' in activity['profileDetails'], "Missing profile id in profileDetails"
     
+
+    print("✅ All recent activity records are valid.")
+    print(f"Response: {json.dumps(response_data, indent=2)}")
     
 def load_preference_data(file_path):
     """

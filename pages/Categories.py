@@ -34,5 +34,18 @@ def categories():
     response_data = response.json()
 
    
-    data = response_data.get('Categories')
-    assert data is not None, "Expected 'data' to be present in the response."
+    categories = response_data.get('Categories')
+    assert categories is not None, "Expected 'Categories' key in response"
+
+    # Define expected data
+    expected_categories = [
+        {"CategoryId": 1, "CategoryName": "Personality Insights"},
+        {"CategoryId": 2, "CategoryName": "Lifestyle Preferences"},
+        {"CategoryId": 3, "CategoryName": "Family Values"},
+        {"CategoryId": 4, "CategoryName": "Bride-Specific Questions"},
+        {"CategoryId": 5, "CategoryName": "Groom-Specific Questions"},
+        {"CategoryId": 6, "CategoryName": "Shared Questions"}
+    ]
+
+    # Assert data matches expected categories
+    assert categories == expected_categories, f"Expected categories do not match. Got: {categories}"

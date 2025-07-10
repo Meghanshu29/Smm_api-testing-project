@@ -41,7 +41,7 @@ def interaction_like_dislike():
 
     # Check if the response contains a success message
     assert 'success' in response_data.get('status', '').lower(), f"Interaction failed: {response_data.get('message')}"
-
+    assert 'message' in response_data, "Expected 'message' key not found in the response."
     # Optional: Print the response for debugging
     print(f"Response: {response.json()}")
     
