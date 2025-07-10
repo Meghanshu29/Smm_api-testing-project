@@ -45,5 +45,5 @@ def add_recent_activity():
 
     # Optional: Print the response for debugging
     print(f"Response: {response.json()}")
-    
-    
+
+    assert response_data.get('message') == 'Recent Activity Added Successfully', "Expected message 'Recent Activity Added Successfully' not found in the response."
