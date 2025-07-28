@@ -28,30 +28,19 @@ def company_info():
     # Assertions to verify the response
     assert response.status_code == 200, f"Expected status code 200, but got {response.status_code}"
     response_data = response.json()
+    assert 'status' in response_data, "'status' key missing in response"
+    assert 'message' in response_data, "'message' key missing in response"
+    assert 'data' in response_data, "'data' key missing in response"
 
-    # Check if the response contains 'status' and it equals 'success'
-    assert response_data.get('status') == 'success', f"Expected status 'success', but got {response_data.get('status')}"
-    
-    # Check if company information is present in the response
-    assert 'data' in response_data, "Company data is missing in the response"
-    
-    company_data = response_data.get('data')
-    assert company_data is not None, "Company information data is null"
-    
-    # Verify specific data fields exist
-    assert 'email' in company_data, "Email field is missing"
-    assert 'mobile' in company_data, "Mobile field is missing"
-    assert 'subject' in company_data, "Subject field is missing"
-    assert 'body' in company_data, "Body field is missing"
-    
-    # Verify fields are not empty
-    assert company_data['email'], "Email field is empty"
-    assert company_data['mobile'], "Mobile field is empty"
-    assert company_data['subject'], "Subject field is empty"
-    assert company_data['body'], "Body field is empty"
-    
-    # Verify message exists
-    assert 'message' in response_data, "Message field is missing"
-    assert response_data.get('message'), "Message field is empty"
-    
-    print("Company info retrieved and validated successfully!")
+    # Validate top-level values
+    assert response_data['status'] == 'success', f"Expected status 'success', got {response_data['status']}"
+    assert response_data['message'], "Message field is empty or null"
+
+    # Validate nested 'data' fields
+    data = response_data['data']
+    expected_fields = ['body', 'email', 'mobile', 'subject']
+    for field in expected_fields:
+        assert field in data, f"'{field}' field missing in 'data'"
+        assert data[field], f"'{field}' field is empty"
+
+    print("✅ Company info retrieved and validated successfully.")

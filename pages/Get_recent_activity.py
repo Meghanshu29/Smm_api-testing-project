@@ -34,29 +34,35 @@ def get_recent_activity():
     # Assertions to verify the response
     assert response.status_code == 200  # Expecting a 200 OK response
     response_data = response.json()
-    assert 'success' in response_data.get('status', '').lower(), f"Fetch failed: {response_data.get('message')}"
-    assert 'result' in response_data, "No result field in response"
-    assert isinstance(response_data['result'], list), "Result is not a list"
+    assert response.status_code == 200, f"❌ Unexpected status code: {response.status_code}"
+    response_data = response.json()
 
-    activities = response_data['result']
-    assert len(activities) > 0, "No recent activity found"
+    # Validate top-level keys
+    assert response_data.get("status", "").lower() == "success", f"❌ Status not 'success': {response_data.get('status')}"
+    assert "message" in response_data, "❌ 'message' key missing"
+    assert "result" in response_data, "❌ 'result' key missing"
 
-    # Sample verification: checking one or more expected fields
-    for activity in activities:
-        assert 'activityId' in activity, "Missing activityId"
-        assert 'activityType' in activity, "Missing activityType"
-        assert activity['activityType'] in ['view', 'like', 'dislike'], f"Unexpected activityType: {activity['activityType']}"
-        assert 'message' in activity, "Missing message"
-        assert 'profileDetails' in activity, "Missing profileDetails"
-        assert 'id' in activity['profileDetails'], "Missing profile id in profileDetails"
-    
+    activities = response_data["result"]
+    assert isinstance(activities, list), "❌ 'result' should be a list"
+    assert len(activities) > 0, "⚠️ No recent activities found"
 
-    print("✅ All recent activity records are valid.")
-    print(f"Response: {json.dumps(response_data, indent=2)}")
-    
-def load_preference_data(file_path):
-    """
-    Load the preference data from a JSON file.
-    """
-    with open(file_path, 'r') as file:
-        return json.load(file)
+    for i, activity in enumerate(activities):
+        assert isinstance(activity, dict), f"❌ Activity #{i+1} is not a dictionary"
+
+        # Check required keys
+        for key in ["activityId", "activityType", "activityTime", "profileDetails", "message"]:
+            assert key in activity, f"❌ Missing key '{key}' in activity #{i+1}"
+
+        # Validate activityType value
+        valid_types = {"view", "like", "dislike"}
+        assert activity["activityType"] in valid_types, f"❌ Invalid activityType: {activity['activityType']}"
+
+        # Validate profileDetails
+        profile = activity["profileDetails"]
+        assert isinstance(profile, dict), f"❌ profileDetails in activity #{i+1} is not a dict"
+        for pkey in ["id", "firstName", "profileUrl"]:
+            assert pkey in profile, f"❌ Missing '{pkey}' in profileDetails of activity #{i+1}"
+
+    print("✅ All recent activity records validated successfully.")
+    print("🔍 Sample response preview:")
+    print(json.dumps(response_data, indent=2))

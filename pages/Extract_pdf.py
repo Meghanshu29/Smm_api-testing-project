@@ -32,31 +32,38 @@ def extract_pdf():
     response = client.post(extract_pdf_url, data=extract_data)
     assert response.status_code == 200  
     response_data = response.json()
-
-    assert 'success' in response_data.get('status', '').lower(), f"PDF extraction failed: {response_data.get('message')}"
-    print(f"Response: {response.json()}")
+    assert response_data.get('status', '').lower() == 'success', f"❌ Status not success: {response_data.get('status')}"
     
-    data = response_data.get('data', None)
-    assert data is not None, "'data' key is missing in the response"
+    assert 'data' in response_data, "❌ Missing 'data' key in response"
+    data = response_data['data']
+    assert isinstance(data, dict), "❌ 'data' is not a dictionary"
 
-    # Define the expected structure of the data
+    print("✅ Top-level structure validated.")
+
+    # ✅ Match with frontend Dart Data model keys
     expected_keys = [
-        "name", "gender", "dateOfBirth", "placeOfBirth", "timeOfBirth", "heightCM", "weightKG", "bloodGroup",
-        "complexion", "motherTongue", "maritalStatus", "subCaste", "gotra", "address", "phoneNumber", "email",
-        "city", "state", "country", "zipCode", "fatherName", "motherName", "highestDegree", "institution",
-        "additionalQualification", "occupation", "occupationCompany", "occupationLocation", "maxAnnualIncomeIndividual",
-        "minAnnualIncomeIndividual", "hobbies", "languagesKnown", "aboutMe", "familyType", "familyBackground",
-        "minAnnualIncomeFamily", "maxAnnualIncomeFamily", "nativePlace", "disability", "workingWith", "emailAddress",
-        "alternateMobileNumber", "isGunnMatching", "hometown", "residentalAddress"
+        "name", "gender", "dateOfBirth", "placeOfBirth", "timeOfBirth", "heightCM", "weightKG",
+        "bloodGroup", "complexion", "motherTongue", "maritalStatus", "subCaste", "gotra",
+        "address", "phoneNumber", "email", "city", "state", "country", "zipCode", "fatherName",
+        "motherName", "highestDegree", "institution", "additionalQualification", "occupation",
+        "occupationCompany", "occupationLocation", "maxAnnualIncomeIndividual", "minAnnualIncomeIndividual",
+        "hobbies", "languagesKnown", "aboutMe", "familyType", "familyBackground",
+        "minAnnualIncomeFamily", "maxAnnualIncomeFamily", "nativePlace", "disability", "workingWith",
+        "emailAddress", "alternateMobileNumber", "isGunnMatching", "hometown", "residentalAddress"
     ]
 
-    # Check if all expected keys are present in the response
     for key in expected_keys:
-        assert key in data, f"Missing expected key: {key} in the response data"
+        assert key in data, f"❌ Missing key: '{key}' in response data"
 
-    # Optionally, you can verify the content of certain fields (e.g., strings, integers, arrays, etc.)
-    assert isinstance(data.get('hobbies', []), list), "'hobbies' should be a list."
-    assert isinstance(data.get('languagesKnown', []), list), "'languagesKnown' should be a list."
+    # ✅ Type checks
+    assert isinstance(data.get('hobbies', []), list), "❌ 'hobbies' should be a list"
+    assert isinstance(data.get('languagesKnown', []), list), "❌ 'languagesKnown' should be a list"
+    assert isinstance(data.get('name', ""), str), "❌ 'name' should be a string"
+    assert isinstance(data.get('dateOfBirth', ""), str), "❌ 'dateOfBirth' should be a string"
 
-    print("Response data structure verified successfully.")
+    # ✅ Optional: Print trimmed preview
+    print("🔍 Extracted Bio-data Preview:")
+    print(json.dumps(data, indent=2)[:1000] + '...')
 
+    print("🎉 PDF data extraction verified successfully.")
+    

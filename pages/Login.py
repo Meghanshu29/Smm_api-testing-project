@@ -14,8 +14,8 @@ def login_user():
   
     print("Running test_login_user")
     client = TokenClient()
-    User = "U791749054583"
-    Password = "M5pai6DqvfiH" 
+    User = "U331751695202"
+    Password = "Pass12345" 
     extract_pdf_url = f"{BASE_URL}/login"
     login_data = {
         'user': User,

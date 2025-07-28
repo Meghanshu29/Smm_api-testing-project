@@ -48,20 +48,32 @@ def get_preference_data_and_verify_json_length():
 
     # Parse response JSON
     response_data = response.json()
-    print("API Response received.")
+    print("✅ API response received.")
 
-    # Validate top-level keys
-    assert response_data.get("status", "").lower() == "success", "API status not success"
-    assert "data" in response_data, "'data' key missing in response"
-    assert "preferences" in response_data["data"], "'preferences' missing under 'data'"
-    assert isinstance(response_data["data"]["preferences"], list), "'preferences' is not a list"
+    # Validate top-level structure
+    assert response_data.get("status") == "success", "Missing or invalid 'status'"
+    assert response_data.get("message"), "Missing or empty 'message'"
+    assert "data" in response_data and isinstance(response_data["data"], dict), "'data' key missing or invalid"
+    
+    data = response_data["data"]
 
-    # Count words
+    # Validate user profile presence
+    assert "profile" in data, "Missing 'profile' key"
+    assert "preferences" in data, "Missing 'preferences' key"
+
+    # Validate preference type
+    assert isinstance(data["preferences"], dict), "'preferences' should be an object"
+
+    # Optional: Validate photos and other expected fields exist
+    assert isinstance(data.get("photos", []), list), "'photos' must be a list"
+
+    # Count total words in JSON response
     word_count = count_words_in_json(response_data)
-    print(f"Total words in the returned JSON: {word_count}")
-
-    # Range validation
+    print(f"📝 Word count in response JSON: {word_count}")
     assert 260 <= word_count <= 360, f"Expected word count between 260–360, got {word_count}"
 
-    # Optional: Print for visual inspection
+    # Optional: print formatted output for inspection
+    print("🔍 JSON Preview:")
     print(json.dumps(response_data, indent=2))
+
+    print("🎉 Test passed: Preference data is valid and well-structured.")

@@ -31,38 +31,33 @@ def get_general_data():
     response_data = response.json()
 
     # Check if the response contains 'status' and it equals 'success'
-    general_data = response_data.get('generalData')
-    assert general_data is not None, "Expected 'generalData' to be present in the response."
+       # Check if the response contains 'generalData', 'message', and 'status'
+    assert 'generalData' in response_data, "'generalData' is missing in the response."
+    assert 'status' in response_data, "'status' is missing in the response."
+    assert response_data['status'] == 'success', f"Expected status 'success', but got {response_data['status']}"
 
-    # Verify 'subCaste' field is in 'generalData' and contains values
-    assert 'subCaste' in general_data, "'subCaste' not found in 'generalData'."
-    assert isinstance(general_data['subCaste'], list), "'subCaste' is not a list."
-    assert len(general_data['subCaste']) > 0, "'subCaste' is empty."
+    general_data = response_data['generalData']
 
-    # Verify 'gotra' field is in 'generalData' and contains values
-    assert 'gotra' in general_data, "'gotra' not found in 'generalData'."
-    assert isinstance(general_data['gotra'], list), "'gotra' is not a list."
-    assert len(general_data['gotra']) > 0, "'gotra' is empty."
+    # Define a helper function to check if a list field exists and has values
+    def check_field(field_name):
+        assert field_name in general_data, f"'{field_name}' not found in 'generalData'."
+        assert isinstance(general_data[field_name], list), f"'{field_name}' is not a list."
+        assert len(general_data[field_name]) > 0, f"'{field_name}' is empty."
 
-    # Verify 'profession' field is in 'generalData' and contains values
-    assert 'profession' in general_data, "'profession' not found in 'generalData'."
-    assert isinstance(general_data['profession'], list), "'profession' is not a list."
-    assert len(general_data['profession']) > 0, "'profession' is empty."
+    # Check required fields
+    check_field('subCaste')
+    check_field('gotra')
+    check_field('profession')
+    check_field('hobbies')
 
-    # Verify 'hobbies' field is in 'generalData' and contains values
-    assert 'hobbies' in general_data, "'hobbies' not found in 'generalData'."
-    assert isinstance(general_data['hobbies'], list), "'hobbies' is not a list."
-    assert len(general_data['hobbies']) > 0, "'hobbies' is empty."
-
-    # Verify 'qualification' field is in 'generalData'
+    # Verify 'qualification' and 'language' fields exist
     assert 'qualification' in general_data, "'qualification' not found in 'generalData'."
-
-    # Verify 'language' field is in 'generalData'
     assert 'language' in general_data, "'language' not found in 'generalData'."
 
     # Optional: Check if 'dietary' is present in 'generalData' if required
     if 'dietary' in general_data:
-        assert general_data['dietary'] in ['Vegan', 'Vegetarian', 'Non-Vegetarian'], f"Unexpected dietary value: {general_data['dietary']}"
+        assert general_data['dietary'] in ['Vegan', 'Vegetarian', 'Non-Vegetarian'], \
+            f"Unexpected dietary value: {general_data['dietary']}"
 
     # Optional: Print the response data for debugging
     print(f"Response Data: {json.dumps(response_data, indent=2)}")
